@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -96,7 +97,7 @@ public class TrackingService extends Service implements LocationListener {
             public void onLocationResult(LocationResult locationResult) {
                 double Longitude = locationResult.getLastLocation().getLongitude();
                 double Latitude = locationResult.getLastLocation().getLatitude();
-                
+
                 callTrackingService(Longitude, Latitude);
             }
 
@@ -111,25 +112,25 @@ public class TrackingService extends Service implements LocationListener {
             locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
 
-        try {
-            if (locationManager != null) {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, 10f, locationListener);
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 10f, locationListener);
-
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "Exception : " + e.getMessage());
-        }
+//        try {
+//            if (locationManager != null) {
+//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                    // TODO: Consider calling
+//                    //    ActivityCompat#requestPermissions
+//                    // here to request the missing permissions, and then overriding
+//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                    //                                          int[] grantResults)
+//                    // to handle the case where the user grants the permission. See the documentation
+//                    // for ActivityCompat#requestPermissions for more details.
+//                    return;
+//                }
+//                //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, 10f, locationListener);
+//                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 10f, locationListener);
+//
+//            }
+//        } catch (Exception e) {
+//            Log.d(TAG, "Exception : " + e.getMessage());
+//        }
 
 
     }
@@ -146,16 +147,21 @@ public class TrackingService extends Service implements LocationListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //super.onStartCommand(intent, flags, startId);
         Bundle data = intent.getExtras();
-        if (data == null) {
-            Toast.makeText(context, "Haven't data", Toast.LENGTH_LONG).show();
+        if (data != null) {
+            user = data.getParcelable(Config.USER_KEY);
         }
-        user = data.getParcelable(Config.USER_KEY);
 
         return START_STICKY;
     }
 
+
     @Override
     public IBinder onBind(Intent intent) {
+        Bundle data = intent.getExtras();
+        if (data != null) {
+            user = data.getParcelable(Config.USER_KEY);
+        }
+
         return null;
     }
 
@@ -185,6 +191,7 @@ public class TrackingService extends Service implements LocationListener {
             }
         });
     }
+
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
