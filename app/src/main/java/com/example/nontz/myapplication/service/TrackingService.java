@@ -45,7 +45,7 @@ public class TrackingService extends Service implements LocationListener {
     // final parameters
     private final int MY_PERMISSIONS_REQUEST = 10001;
     private final String TAG = "TrackingService";
-    private final int interval = 1 * 30 * 1000;
+    private final int interval = 1 * 60 * 1000;
     // location listener
     private LocationListener locationListener = this;
     // user model
@@ -98,7 +98,7 @@ public class TrackingService extends Service implements LocationListener {
                 double Longitude = locationResult.getLastLocation().getLongitude();
                 double Latitude = locationResult.getLastLocation().getLatitude();
 
-                callTrackingService(Longitude, Latitude);
+                callTrackingService( Latitude,Longitude);
             }
 
             @Override
